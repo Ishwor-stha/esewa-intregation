@@ -7,8 +7,8 @@ const app = express();
 app.use(express.json({ limit: '15kb' }));
 
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
-const SECRET_KEY = '8gBm/:&EnhH.1/q'; // Provided secret key for testing
-const PRODUCT_CODE = 'EPAYTEST'; // Merchant ID/Service Code
+const SECRET_KEY = '8gBm/:&EnhH.1/q';
+const PRODUCT_CODE = 'EPAYTEST';
 const SUCCESS_URL = 'http://localhost:4000/success';
 const FAILURE_URL = 'http://localhost:4000/failure';
 
@@ -84,11 +84,11 @@ app.get('/success', async (req, res) => {
 
         // Generate the message to verify HMAC signature 
         const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
-        console.log("DESTRUCTRING")
-        console.log("total_amount:" + total_amount)
-        console.log("transaction_uid" + transaction_uuid)
-        console.log("produuct code" + product_code)
-        console.log("END")
+        console.log("DESTRUCTRING");
+        console.log("total_amount:" + total_amount);
+        console.log("transaction_uid" + transaction_uuid);
+        console.log("produuct code" + product_code);
+        console.log("END");
 
 
 
@@ -96,10 +96,10 @@ app.get('/success', async (req, res) => {
         // Recreate the signature using the secret key (for comparison)
         const computedSignature = cryptoJS.HmacSHA256(message, SECRET_KEY);
         const computedSignatureBase64 = cryptoJS.enc.Base64.stringify(computedSignature);
-        console.log(req.query.data)
-        console.log(computedSignatureBase64)
+        console.log(req.query.data);
+        console.log(computedSignatureBase64);
 
-        console.log(req.query.data===computedSignature)
+        console.log(req.query.data===computedSignature);
 
         
         // if (req.query.signature === computedSignatureBase64) {
