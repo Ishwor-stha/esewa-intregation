@@ -63,7 +63,7 @@ app.get('/pay-with-esewa', (req, res) => {
         res.status(500).json({ status: false, message: error.message });
     }
 });
-// ?request_id=d1958b8611f40301e499435d57652453&amount=560&transaction_code=EPAYTEST
+
 
 // Success Route
 app.get('/success', async (req, res) => {
@@ -101,19 +101,19 @@ app.get('/success', async (req, res) => {
 
         console.log(req.query.data===computedSignature)
 
-        // Compare the decoded signature with the freshly computed signature
-        if (req.query.signature === computedSignatureBase64) {
-            const paymentDetail = await axios.get(`https://rc.esewa.com.np/api/epay/transaction/status/?product_code=${product_code}&total_amount=${total_amount}&transaction_uuid=${transaction_uuid}`);
+        
+        // if (req.query.signature === computedSignatureBase64) {
+        //     const paymentDetail = await axios.get(`https://rc.esewa.com.np/api/epay/transaction/status/?product_code=${product_code}&total_amount=${total_amount}&transaction_uuid=${transaction_uuid}`);
 
-            res.json({
-                status: true,
-                message: 'Transaction successful',
-                payment: paymentDetail.data
-            });
-        } else {
-            // Signature doesn't match
-            res.status(400).json({ status: false, message: 'Invalid signature' });
-        }
+        //     res.json({
+        //         status: true,
+        //         message: 'Transaction successful',
+        //         payment: paymentDetail.data
+        //     });
+        // } else {
+        //     // Signature doesn't match
+        //     res.status(400).json({ status: false, message: 'Invalid signature' });
+        // }
 
     } catch (error) {
         console.error('Error processing success route:', error);
