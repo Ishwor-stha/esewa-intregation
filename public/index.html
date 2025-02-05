@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+        }
+
+        .form-container label {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-container input[type="number"], .form-container input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-container input[type="submit"] {
+            background-color: #27ae60;
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #2ecc71;
+        }
+
+        .form-container input[type="submit"]:active {
+            background-color: #219150;
+        }
+
+        .form-container input[type="number"]:focus,
+        .form-container input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .form-container input[type="submit"]:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Payment Form</h1>
+        <form action="http://localhost:4000/pay-with-esewa" method="POST">
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required><br>
+
+            <label for="tax_amount">Tax Amount:</label>
+            <input type="number" id="tax_amount" name="tax_amount" required><br>
+
+            <label for="service_charge">Product Service Charge:</label>
+            <input type="text" id="product_service_charge" name="product_service_charge" required><br>
+
+            <label for="delivery_charge">Delivery Charge:</label>
+            <input type="text" id="delivery_charge" name="product_delivery_charge" required><br>
+
+            <input type="submit" value="Submit Payment">
+        </form>
+    </div>
+</body>
+</html>
