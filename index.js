@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
-const cryptoJS = require("crypto-js");
+// const cryptoJS = require("crypto-js");
 
 const app = express();
 app.use(express.json({ limit: '15kb' }));
@@ -29,7 +29,6 @@ app.get('/pay-with-esewa', (req, res) => {
         const signature = crypto.createHmac('sha256', SECRET_KEY).update(message).digest('base64');
         // const signature = cryptoJS.HmacSHA256(message, SECRET_KEY);
         // const signatureInBase64 = cryptoJS.enc.Base64.stringify(signature);
-        console.log(signature)
 
         // Send the payment form as a response
         res.send(`
@@ -97,11 +96,15 @@ app.get("/success", async (req, res) => {
                  message: "Invalid transaction data"
                  });
         }
-
+        console.log(response.data)
         res.status(200).json({
              status: true,
               message: "Success",
-            response: response.data 
+            response:{
+                status:response.data.status,
+                ref_id:response.data.ref_id,
+                amount:response.data.amount
+            }
             });
     } catch (error) {
         res.status(500).json({
