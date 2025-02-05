@@ -66,73 +66,6 @@ app.get('/pay-with-esewa', (req, res) => {
     }
 });
 
-/*
-app.get('/success', async (req, res) => {
-    try {
-        console.log(req.body)
-        const encodedData = req.query.data;
-
-        // Decode Base64-encoded data
-        const decodedDataString = Buffer.from(encodedData, 'base64').toString('utf-8');
-        console.log('Decoded Data:', decodedDataString);
-
-        const { transaction_uuid, total_amount, signature } = JSON.parse(decodedDataString);
-
-        // Generate message
-        const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${PRODUCT_CODE}`;
-        console.log(message)
-
-        // Compute signature using crypto
-        const computedSignature = crypto.createHmac('sha256', SECRET_KEY).update(message).digest('base64');
-
-        console.log('Received Signature:', signature);
-        console.log('Computed Signature:', computedSignature);
-
-        // Compare the received signature with the computed one
-        if (computedSignature.trim() === signature.trim()) {
-            res.json({
-                status: true,
-                message: 'Transaction successful',
-            });
-        } else {
-            res.status(400).json({ status: false, message: 'Invalid signature' });
-        }
-    } catch (error) {
-        console.error('Error processing success route:', error);
-        res.status(500).json({ status: false, message: 'Error processing transaction' });
-    }
-});
-*/
-
-
-// Failure Route
-app.get('/failure', (req, res) => {
-    res.json({
-        status: false,
-        message: 'Transaction failed',
-    });
-});
-
-// Transaction Status Check API
-// app.post('/status', async (req, res) => {
-//     try {
-//         const { request_id, amount, transaction_code } = req.body;
-
-//         const response = await axios.post('https://rc-epay.esewa.com.np/api/epay/main/v2/status', {
-//             request_id,
-//             amount,
-//             transaction_code,
-//         });
-
-//         res.json(response.data);
-//     } catch (error) {
-//         res.status(500).json({ status: false, message: error.message });
-//     }
-// });
-
-// Start Server
-
-
 
 app.get("/success", async (req, res) => {
     try {
@@ -140,9 +73,9 @@ app.get("/success", async (req, res) => {
         const decodedData = JSON.parse(Buffer.from(encodedData, "base64").toString("utf-8"));
 
         const secretKey = SECRET_KEY;
-        const dataString = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
+        const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
         
-        const hash = crypto.createHmac("sha256", secretKey).update(dataString).digest("base64");
+        const hash = crypto.createHmac("sha256", secretKey).update(message).digest("base64");
 
         if (hash !== decodedData.signature) {
             return res.status(400).json({ status: false, message: "Invalid signature", decodedData });
@@ -159,13 +92,33 @@ app.get("/success", async (req, res) => {
 
         const { status, transaction_uuid, total_amount } = response.data;
         if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(decodedData.total_amount)) {
-            return res.status(400).json({ status: false, message: "Invalid transaction data", decodedData });
+            return res.status(400).json({
+                 status: false, 
+                 message: "Invalid transaction data"
+                 });
         }
 
-        res.status(200).json({ status: true, message: "Success", response: response.data });
+        res.status(200).json({
+             status: true,
+              message: "Success",
+            response: response.data 
+            });
     } catch (error) {
-        res.status(500).json({ status: false, message: "Server error", error: error.message });
+        res.status(500).json({
+             status: false, 
+             message: "Server error", 
+             error: error.message 
+            });
     }
+});
+
+
+// Failure Route
+app.get('/failure', (req, res) => {
+    res.json({
+        status: false,
+        message: 'Transaction failed',
+    });
 });
 
 app.listen(4000, () => {
