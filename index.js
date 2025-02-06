@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
-const path = require('path')
+const path = require('path');
 // const cryptoJS = require("crypto-js");
 
 const app = express();
@@ -75,10 +75,10 @@ app.get("/payment", (req, res) => {
 // Payment Form Route
 app.post('/pay-with-esewa', async (req, res) => {
     try {
-        const { amount, tax_amount, product_service_charge, product_delivery_charge } = req.body;
+        const { amount, tax_amount = 0, product_service_charge = 0, product_delivery_charge = 0 } = req.body;
 
         const total_amount = parseFloat(amount) + parseFloat(tax_amount) + parseFloat(product_service_charge) + parseFloat(product_delivery_charge);
-        const transaction_uuid = Date.now();  // Unique transaction identifier
+        const transaction_uuid = Date.now();
 
         const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${PRODUCT_CODE}`;
         const signature = crypto.createHmac('sha256', SECRET_KEY).update(message).digest('base64');
@@ -96,6 +96,7 @@ app.post('/pay-with-esewa', async (req, res) => {
             signed_field_names: 'total_amount,transaction_uuid,product_code',
             signature: signature,
         };
+        console.log(paymentData)
 
         // console.log( paymentData);  
 
@@ -105,12 +106,13 @@ app.post('/pay-with-esewa', async (req, res) => {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
+
         // console.log(pay.request.res.responseUrl)
         res.redirect(pay.request.res.responseUrl)
 
 
     } catch (error) {
-        console.error('Error:', error.response ? error.response.data : error.message);  // Log the full error
+
         res.status(500).json({ status: false, message: error.message });
     }
 });
@@ -121,14 +123,13 @@ app.get("/success", async (req, res) => {
     try {
         const encodedData = req.query.data;
         const decodedData = JSON.parse(Buffer.from(encodedData, "base64").toString("utf-8"));
+        const TotalAmt = decodedData.total_amount.replace(/,/g, '')
+        const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${TotalAmt},transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
 
-        const secretKey = SECRET_KEY;
-        const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
-
-        const hash = crypto.createHmac("sha256", secretKey).update(message).digest("base64");
+        const hash = crypto.createHmac("sha256", SECRET_KEY).update(message).digest("base64");
 
         if (hash !== decodedData.signature) {
-            return res.status(400).json({ status: false, message: "Invalid signature", decodedData });
+            return res.status(400).json({ status: false, message: "Invalid signature" });
         }
 
         const response = await axios.get(`https://rc.esewa.com.np/api/epay/transaction/status/`, {
@@ -138,20 +139,21 @@ app.get("/success", async (req, res) => {
             },
             params: {
                 product_code: PRODUCT_CODE,
-                total_amount: decodedData.total_amount,
+                total_amount: TotalAmt,
                 transaction_uuid: decodedData.transaction_uuid
             }
         });
+        console.log(response.data)
 
         const { status, transaction_uuid, total_amount } = response.data;
-        if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(decodedData.total_amount)) {
+        if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(TotalAmt)) {
             return res.status(400).json({
                 status: false,
                 message: "Invalid transaction data"
             });
         }
         // console.log(response.data)
-        res.status(200).json({
+        return res.status(200).json({
             status: true,
             message: "Success",
             response: {
