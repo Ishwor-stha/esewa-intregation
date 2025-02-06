@@ -155,7 +155,7 @@ app.get("/success", async (req, res) => {
         return res.status(200).json({
             status: true,
             message: "Success",
-            response: {
+            transaction_details: {
                 status: response.data.status,
                 ref_id: response.data.ref_id,
                 amount: response.data.total_amount
