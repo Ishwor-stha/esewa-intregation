@@ -9,6 +9,7 @@ app.use(express.json({ limit: '15kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// put all this data on .env
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
 const STATUS_CHECK = 'https://rc.esewa.com.np/api/epay/transaction/status/';
 const SECRET_KEY = '8gBm/:&EnhH.1/q';
