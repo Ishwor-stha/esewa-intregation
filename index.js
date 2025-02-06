@@ -6,15 +6,27 @@ const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '15kb' }));
-app.use(express.urlencoded({ extended: true }));  
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
-const STATUS_CHECK='https://rc.esewa.com.np/api/epay/transaction/status/';
+const STATUS_CHECK = 'https://rc.esewa.com.np/api/epay/transaction/status/';
 const SECRET_KEY = '8gBm/:&EnhH.1/q';
 const PRODUCT_CODE = 'EPAYTEST';
 const SUCCESS_URL = 'http://localhost:4000/success';
 const FAILURE_URL = 'http://localhost:4000/failure';
+
+function errorMessage(res, message, error = null) {
+    const response = {
+        status: false,
+        message: message
+    };
+    if (error) {
+        response.error = error;
+    }
+    res.status(500).json(response);
+}
+
 
 // // Generate Payment Form
 // app.get('/pay-with-esewa', (req, res) => {
@@ -75,9 +87,10 @@ app.get("/payment", (req, res) => {
 
 // Payment Form Route
 app.post('/pay-with-esewa', async (req, res) => {
+    if (!req.body) return errorMessage(res, "All data field is required")
     try {
         const { amount, tax_amount = 0, product_service_charge = 0, product_delivery_charge = 0 } = req.body;
-
+        if (!amount) return errorMessage(res, "No amount is given.Please enter a amount")
         const total_amount = parseFloat(amount) + parseFloat(tax_amount) + parseFloat(product_service_charge) + parseFloat(product_delivery_charge);
         const transaction_uuid = Date.now();
 
@@ -113,7 +126,7 @@ app.post('/pay-with-esewa', async (req, res) => {
 
     } catch (error) {
 
-        res.status(500).json({ status: false, message: error.message });
+        return errorMessage(res, "server error", error.message)
     }
 });
 
@@ -121,6 +134,7 @@ app.post('/pay-with-esewa', async (req, res) => {
 
 app.get("/success", async (req, res) => {
     try {
+        if (!req.query.data) return errorMessage(res, "Server error")
         const encodedData = req.query.data;
         const decodedData = JSON.parse(Buffer.from(encodedData, "base64").toString("utf-8"));
         const TotalAmt = decodedData.total_amount.replace(/,/g, '')
@@ -129,7 +143,7 @@ app.get("/success", async (req, res) => {
         const hash = crypto.createHmac("sha256", SECRET_KEY).update(message).digest("base64");
 
         if (hash !== decodedData.signature) {
-            return res.status(400).json({ status: false, message: "Invalid signature" });
+            return errorMessage(res, "Invalid signature")
         }
 
         const response = await axios.get(STATUS_CHECK, {
@@ -146,10 +160,7 @@ app.get("/success", async (req, res) => {
 
         const { status, transaction_uuid, total_amount } = response.data;
         if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(TotalAmt)) {
-            return res.status(400).json({
-                status: false,
-                message: "Invalid transaction data"
-            });
+            return errorMessage(res, "Invalid transaction details")
         }
         // console.log(response.data)
         return res.status(200).json({
@@ -163,11 +174,7 @@ app.get("/success", async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({
-            status: false,
-            message: "Server error",
-            error: error.message
-        });
+        return errorMessage(res, "Server error", error.message)
     }
 });
 
