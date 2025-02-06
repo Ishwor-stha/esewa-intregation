@@ -10,6 +10,7 @@ app.use(express.urlencoded({ extended: true }));  // Add this line
 app.use(express.static(path.join(__dirname, 'public')));
 
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+const STATUS_CHECK='https://rc.esewa.com.np/api/epay/transaction/status/';
 const SECRET_KEY = '8gBm/:&EnhH.1/q';
 const PRODUCT_CODE = 'EPAYTEST';
 const SUCCESS_URL = 'http://localhost:4000/success';
@@ -100,7 +101,7 @@ app.post('/pay-with-esewa', async (req, res) => {
         // console.log( paymentData);  
 
         // Send request to eSewa API
-        const pay = await axios.post('https://rc-epay.esewa.com.np/api/epay/main/v2/form', new URLSearchParams(paymentData).toString(), {
+        const pay = await axios.post(BASE_URL, new URLSearchParams(paymentData).toString(), {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
@@ -131,7 +132,7 @@ app.get("/success", async (req, res) => {
             return res.status(400).json({ status: false, message: "Invalid signature" });
         }
 
-        const response = await axios.get(`https://rc.esewa.com.np/api/epay/transaction/status/`, {
+        const response = await axios.get(STATUS_CHECK, {
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
