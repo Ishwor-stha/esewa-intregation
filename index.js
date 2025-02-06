@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
-const path=require('path')
+const path = require('path')
 // const cryptoJS = require("crypto-js");
 
 const app = express();
@@ -68,7 +68,7 @@ const FAILURE_URL = 'http://localhost:4000/failure';
 //     }
 // });
 
-app.get("/payment",(req,res)=>{
+app.get("/payment", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
 
@@ -76,51 +76,39 @@ app.get("/payment",(req,res)=>{
 app.post('/pay-with-esewa', async (req, res) => {
     try {
         const { amount, tax_amount, product_service_charge, product_delivery_charge } = req.body;
-        
-        const total_amount = parseFloat(amount) + parseFloat(tax_amount) +parseFloat(product_service_charge)+parseFloat(product_delivery_charge);
+
+        const total_amount = parseFloat(amount) + parseFloat(tax_amount) + parseFloat(product_service_charge) + parseFloat(product_delivery_charge);
         const transaction_uuid = Date.now();  // Unique transaction identifier
-            
+
         const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${PRODUCT_CODE}`;
         const signature = crypto.createHmac('sha256', SECRET_KEY).update(message).digest('base64');
 
         const paymentData = {
-            amount:parseFloat(amount),
-            tax_amount:parseFloat(tax_amount),
-            total_amount:parseFloat(total_amount),
-            product_service_charge:parseFloat(product_service_charge),
-            product_delivery_charge:parseFloat(product_delivery_charge),
+            amount: parseFloat(amount),
+            tax_amount: parseFloat(tax_amount),
+            total_amount: parseFloat(total_amount),
+            product_service_charge: parseFloat(product_service_charge),
+            product_delivery_charge: parseFloat(product_delivery_charge),
             transaction_uuid,
             product_code: PRODUCT_CODE,
             success_url: SUCCESS_URL,
             failure_url: FAILURE_URL,
-            signed_field_names: 'total_amount,transaction_uuid,product_code',  
-            signature: signature,  
+            signed_field_names: 'total_amount,transaction_uuid,product_code',
+            signature: signature,
         };
 
-        console.log('Payment Data:', paymentData);  // Log the payment data
+        // console.log( paymentData);  
 
         // Send request to eSewa API
-        await axios.post('https://rc-epay.esewa.com.np/api/epay/main/v2/form', new URLSearchParams(paymentData).toString(), {
+        const pay = await axios.post('https://rc-epay.esewa.com.np/api/epay/main/v2/form', new URLSearchParams(paymentData).toString(), {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
-
-        res.send(`
-            <body>
-                <form action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST">
-                    <input type="submit" value="Proceed to eSewa Payment">
-                </form>
-            </body>
-        `);
+        // console.log(pay.request.res.responseUrl)
+        res.redirect(pay.request.res.responseUrl)
 
 
-
-       
-        
-        
-
-        
     } catch (error) {
         console.error('Error:', error.response ? error.response.data : error.message);  // Log the full error
         res.status(500).json({ status: false, message: error.message });
