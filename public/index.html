@@ -1,102 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Form</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neon Payment Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #ff8e8e;
+            --accent: #4ecdc4;
+            --dark: #2d3436;
+        }
+
+        /* Base setup */
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            color: #333;
-            margin: 0;
-            padding: 0;
+
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+            /* Fallback background */
+            background: linear-gradient(135deg, #0a0a0a, #222);
         }
 
+        /* Creative animated background container */
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        /* Generic shape styling */
+        .shape {
+            position: absolute;
+            opacity: 0.2;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        /* Circle shape */
+        .circle {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(78, 205, 196, 0.8), transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* Triangle shape using borders */
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 140px solid rgba(255, 107, 107, 0.8);
+        }
+
+        /* Hexagon shape with clip-path */
+        .hexagon {
+            width: 100px;
+            height: 55px;
+            background: rgba(255, 142, 142, 0.8);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        /* Floating animation effect */
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: translateY(-50px) rotate(180deg) scale(1.2);
+            }
+
+            100% {
+                transform: translateY(0) rotate(360deg) scale(1);
+            }
+        }
+
+        /* Positioning various shapes with different timing */
+        .shape:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-duration: 25s;
+        }
+
+        .shape:nth-child(2) {
+            top: 30%;
+            left: 80%;
+            animation-duration: 30s;
+            animation-delay: 3s;
+        }
+
+        .shape:nth-child(3) {
+            top: 70%;
+            left: 20%;
+            animation-duration: 28s;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(4) {
+            top: 50%;
+            left: 50%;
+            animation-duration: 35s;
+            animation-delay: 4s;
+        }
+
+        .shape:nth-child(5) {
+            top: 15%;
+            left: 60%;
+            animation-duration: 22s;
+            animation-delay: 1s;
+        }
+
+        .shape:nth-child(6) {
+            top: 80%;
+            left: 10%;
+            animation-duration: 26s;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(7) {
+            top: 40%;
+            left: 30%;
+            animation-duration: 32s;
+            animation-delay: 2.5s;
+        }
+
+        .shape:nth-child(8) {
+            top: 65%;
+            left: 75%;
+            animation-duration: 30s;
+            animation-delay: 3.5s;
+        }
+
+        /* Form container styling remains similar */
         .form-container {
-            background: #fff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 40px;
-            width: 400px;
-            text-align: center;
-            animation: fadeIn 0.5s ease-in-out;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 450px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transform: scale(0.98);
+            transition: transform 0.3s ease;
+            z-index: 1;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .form-container:hover {
+            transform: scale(1);
         }
 
         h1 {
-            color: #6e8efb;
-            margin-bottom: 20px;
+            color: var(--dark);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
         }
 
-        .form-container label {
-            font-size: 14px;
-            color: #555;
-            display: block;
-            text-align: left;
-            margin: 10px 0 5px;
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
         }
 
-        .form-container input[type="number"], 
-        .form-container input[type="text"] {
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark);
+            opacity: 0.6;
+        }
+
+        input {
             width: 100%;
-            padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 1rem 1rem 1rem 40px;
+            border: 2px solid rgba(45, 52, 54, 0.1);
+            border-radius: 10px;
             font-size: 16px;
-            box-sizing: border-box;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
         }
 
-        .form-container input:focus {
-            border-color: #6e8efb;
-            box-shadow: 0 0 5px rgba(110, 142, 251, 0.5);
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.2);
             outline: none;
+            background: white;
         }
 
-        .form-container input[type="submit"] {
-            background: #6e8efb;
+        input[type="submit"] {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
             color: white;
-            padding: 12px;
-            font-size: 18px;
+            padding: 1rem;
+            font-weight: 600;
             border: none;
-            border-radius: 5px;
+            border-radius: 10px;
             cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .form-container input[type="submit"]:hover {
-            background: #5a7bf7;
+        input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        input[type="submit"]::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: right 0.3s ease;
+        }
+
+        input[type="submit"]:hover::after {
+            right: 20px;
+        }
+
+        .watermark {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            opacity: 0.1;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .success-check {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: checkPop 0.6s ease;
+        }
+
+        @keyframes checkPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+            }
+
+            80% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
     </style>
 </head>
+
 <body>
+    <!-- Creative animated background with multiple geometric shapes -->
+    <div class="background-animation">
+        <div class="shape circle"></div>
+        <div class="shape triangle"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape circle"></div>
+        <div class="shape triangle"></div>
+        <div class="shape hexagon"></div>
+        <div class="shape circle"></div>
+        <div class="shape triangle"></div>
+    </div>
+
     <div class="form-container">
-        <h1>Esewa Payment</h1>
+        <h1>Payment Gateway</h1>
+        <div class="watermark">ESEWA</div>
         <form action="http://localhost:4000/pay-with-esewa" method="POST">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" required>
-
-            <label for="tax_amount">Tax Amount:</label>
-            <input type="number" id="tax_amount" name="tax_amount" required>
-
-            <label for="service_charge">Product Service Charge:</label>
-            <input type="text" id="product_service_charge" name="product_service_charge" required>
-
-            <label for="delivery_charge">Delivery Charge:</label>
-            <input type="text" id="delivery_charge" name="product_delivery_charge" required>
-
+            <div class="input-group">
+                <i class="fas fa-coins"></i>
+                <input type="number" id="amount" name="amount" placeholder="Amount" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-percentage"></i>
+                <input type="number" id="tax_amount" name="tax_amount" placeholder="Tax Amount" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-concierge-bell"></i>
+                <input type="text" id="product_service_charge" name="product_service_charge"
+                    placeholder="Service Charge" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-truck-moving"></i>
+                <input type="text" id="delivery_charge" name="product_delivery_charge" placeholder="Delivery Charge"
+                    required>
+            </div>
             <input type="submit" value="Proceed to Pay">
         </form>
+        <div class="success-check"></div>
     </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = this;
+            const check = document.querySelector('.success-check');
+            form.style.opacity = '0';
+            check.style.display = 'block';
+            setTimeout(() => {
+                form.submit();
+            }, 2000);
+        });
+    </script>
 </body>
+
 </html>

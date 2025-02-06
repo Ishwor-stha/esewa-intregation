@@ -163,17 +163,19 @@ app.get("/success", async (req, res) => {
         if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(TotalAmt)) {
             return errorMessage(res, "Invalid transaction details")
         }
-        // console.log(response.data)
-        return res.status(200).json({
-            status: true,
-            message: "Success",
-            transaction_details: {
-                status: response.data.status,
-                ref_id: response.data.ref_id,
-                amount: response.data.total_amount
+        return res.sendFile(path.join(__dirname, 'public', 'sucess.html'));
 
-            }
-        });
+        // console.log(response.data)
+        // return res.status(200).json({
+        //     status: true,
+        //     message: "Success",
+        //     transaction_details: {
+        //         status: response.data.status,
+        //         ref_id: response.data.ref_id,
+        //         amount: response.data.total_amount
+
+        //     }
+        // });
     } catch (error) {
         return errorMessage(res, "Server error", error.message)
     }
@@ -182,10 +184,13 @@ app.get("/success", async (req, res) => {
 
 // failure Route
 app.get('/failure', (req, res) => {
-    res.status(500).json({
-        status: false,
-        message: 'Transaction failed.Please try again later.',
-    });
+
+    return res.sendFile(path.join(__dirname, 'public', 'failed.html'));
+
+    // res.status(500).json({
+    //     status: false,
+    //     message: 'Transaction failed.Please try again later.',
+    // });
 });
 
 app.listen(4000, () => {
