@@ -10,7 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // put all this data on .env
+//for production (https://epay.esewa.com.np/api/epay/main/v2/form )
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+ 
+//for production (https://epay.esewa.com.np/api/epay/transaction/status)
 const STATUS_CHECK = 'https://rc.esewa.com.np/api/epay/transaction/status/';
 const SECRET_KEY = '8gBm/:&EnhH.1/q';
 const PRODUCT_CODE = 'EPAYTEST';
