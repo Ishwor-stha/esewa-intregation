@@ -96,7 +96,6 @@ app.post('/pay-with-esewa', async (req, res) => {
             signed_field_names: 'total_amount,transaction_uuid,product_code',
             signature: signature,
         };
-        console.log(paymentData)
 
         // console.log( paymentData);  
 
@@ -143,7 +142,6 @@ app.get("/success", async (req, res) => {
                 transaction_uuid: decodedData.transaction_uuid
             }
         });
-        console.log(response.data)
 
         const { status, transaction_uuid, total_amount } = response.data;
         if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(TotalAmt)) {
