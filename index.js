@@ -9,7 +9,7 @@ app.use(express.json({ limit: '15kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// put all this data on .env
+                        // PUT ALL THE BELOW CREDENTIALS ON .ENV FILE
 //for production (https://epay.esewa.com.np/api/epay/main/v2/form )
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
  
@@ -90,7 +90,7 @@ app.get("/success", async (req, res) => {
         if (!req.query.data) return errorMessage(res, "Server error")
         const encodedData = req.query.data;
         const decodedData = JSON.parse(Buffer.from(encodedData, "base64").toString("utf-8"));
-        const TotalAmt = decodedData.total_amount.replace(/,/g, '')
+        const TotalAmt = decodedData.total_amount.replace(/,/g, '')//removing the comma from the amount for hashing the message ie (5,000)=>(5000)
         const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${TotalAmt},
         transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
 
