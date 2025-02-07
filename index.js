@@ -95,12 +95,12 @@ app.post('/pay-with-esewa', async (req, res) => {
     try {
         const { amount, tax_amount = 0, product_service_charge = 0, product_delivery_charge = 0 } = req.body;
         if (!amount) return errorMessage(res, "No amount is given.Please enter a amount")
+        if(amount<=0)return errorMessage(res, "Amount must be above 0.")
         const total_amount = parseFloat(amount) + parseFloat(tax_amount) + parseFloat(product_service_charge) + parseFloat(product_delivery_charge);
         const transaction_uuid = Date.now();
-
+	
         const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${PRODUCT_CODE}`;
         const signature = crypto.createHmac('sha256', SECRET_KEY).update(message).digest('base64');
-
         const paymentData = {
             amount: parseFloat(amount),
             tax_amount: parseFloat(tax_amount),
@@ -118,18 +118,20 @@ app.post('/pay-with-esewa', async (req, res) => {
         // console.log( paymentData);  
 
         // Send request to eSewa API
+
         const pay = await axios.post(BASE_URL, new URLSearchParams(paymentData).toString(), {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
-
+	
         // console.log(pay.request.res.responseUrl)
         res.redirect(pay.request.res.responseUrl)
+	
 
 
     } catch (error) {
-
+	console.log(error)
         return errorMessage(res, "server error", error.message)
     }
 });
