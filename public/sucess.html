@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Payment Success</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Success - Dynamic Burst with Star Logo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent: #4ecdc4;
+      --accent: #ff6b6b;
       --dark: #2d3436;
+      /* Colors for the animated gradient background */
+      --gradient-start: #ee7752;
+      --gradient-mid: #e73c7e;
+      --gradient-next: #23a6d5;
+      --gradient-end: #23d5ab;
     }
-    /* Base styling and centering */
+    /* Fast animated gradient background for the body */
     body {
       margin: 0;
       padding: 0;
@@ -19,99 +24,128 @@
       justify-content: center;
       align-items: center;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #0a0a0a, #222);
+      background: linear-gradient(-45deg, var(--gradient-start), var(--gradient-mid), var(--gradient-next), var(--gradient-end));
+      background-size: 400% 400%;
+      animation: gradientBG 5s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    /* Container with a subtle patterned background */
+    .container {
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff 25%, #f9f9f9 25%, #f9f9f9 50%, #ffffff 50%, #ffffff 75%, #f9f9f9 75%, #f9f9f9 100%);
+      background-size: 40px 40px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 40px;
+      max-width: 400px;
+      width: 90%;
       position: relative;
       overflow: hidden;
     }
-    /* Animated background overlay */
-    .background-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(78,205,196,0.2) 0%, transparent 70%);
-      animation: moveBg 20s infinite linear;
-      z-index: -1;
-    }
-    @keyframes moveBg {
-      0% { transform: translate(-25%, -25%); }
-      50% { transform: translate(25%, 25%); }
-      100% { transform: translate(-25%, -25%); }
-    }
-    /* Centered container for success message */
-    .success-container {
-      text-align: center;
-      color: #fff;
-      z-index: 1;
-    }
-    /* Animated check mark */
-    .success-check {
-      display: inline-block;
+    .burst-container {
+      position: relative;
       width: 100px;
       height: 100px;
-      border-radius: 50%;
-      border: 5px solid var(--accent);
-      position: relative;
       margin: 0 auto 20px;
-      animation: checkPop 0.6s ease forwards;
     }
-    .success-check::after {
-      content: '';
+    .burst-container div {
       position: absolute;
-      left: 28px;
       top: 50%;
-      width: 20px;
-      height: 40px;
-      border: solid var(--accent);
-      border-width: 0 5px 5px 0;
-      transform: rotate(45deg);
-      transform-origin: bottom left;
+      left: 50%;
+      width: 4px;
+      /* The burst line now grows to 40px and stays at that height */
+      background: var(--accent);
+      transform-origin: bottom center;
       opacity: 0;
-      animation: drawCheck 0.6s 0.4s forwards;
+      animation: burstLine 0.8s forwards;
     }
-    @keyframes checkPop {
-      0% { transform: scale(0); }
-      80% { transform: scale(1.2); }
-      100% { transform: scale(1); }
+    /* 8 radiating lines with staggered delays and rotations */
+    .burst-container div:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg); animation-delay: 0.1s; }
+    .burst-container div:nth-child(2) { transform: translate(-50%, -50%) rotate(45deg); animation-delay: 0.15s; }
+    .burst-container div:nth-child(3) { transform: translate(-50%, -50%) rotate(90deg); animation-delay: 0.2s; }
+    .burst-container div:nth-child(4) { transform: translate(-50%, -50%) rotate(135deg); animation-delay: 0.25s; }
+    .burst-container div:nth-child(5) { transform: translate(-50%, -50%) rotate(180deg); animation-delay: 0.3s; }
+    .burst-container div:nth-child(6) { transform: translate(-50%, -50%) rotate(225deg); animation-delay: 0.35s; }
+    .burst-container div:nth-child(7) { transform: translate(-50%, -50%) rotate(270deg); animation-delay: 0.4s; }
+    .burst-container div:nth-child(8) { transform: translate(-50%, -50%) rotate(315deg); animation-delay: 0.45s; }
+    @keyframes burstLine {
+      0% { height: 0; opacity: 0; }
+      100% { height: 40px; opacity: 1; }
     }
-    @keyframes drawCheck {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+    /* Star element acting as the logo (using CSS clip-path) */
+    .star {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50px;
+      height: 50px;
+      background: var(--accent);
+      clip-path: polygon(
+        50% 0%, 
+        61% 35%, 
+        98% 35%, 
+        68% 57%, 
+        79% 91%, 
+        50% 70%, 
+        21% 91%, 
+        32% 57%, 
+        2% 35%, 
+        39% 35%
+      );
+      transform: translate(-50%, -50%) scale(0) rotate(0deg);
+      animation: popStar 0.8s forwards ease-out 0.5s;
+    }
+    @keyframes popStar {
+      0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+      80% { transform: translate(-50%, -50%) scale(1.2) rotate(20deg); }
+      100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
     }
     h1 {
+      margin: 0;
+      color: var(--accent);
       font-size: 2rem;
-      margin: 0 0 10px;
     }
     p {
-      font-size: 1.2rem;
-      margin: 0;
+      color: #555;
+      font-size: 1rem;
     }
-    /* Button styling */
-    .home-btn {
+    .btn {
       margin-top: 20px;
       padding: 10px 20px;
-      background-color: var(--accent);
-      color: #fff;
+      background: var(--accent);
       border: none;
-      border-radius: 5px;
+      color: white;
+      border-radius: 25px;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
+      transition: transform 0.2s;
     }
-    .home-btn:hover {
-      background-color: #3dc9b8;
+    .btn:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <div class="background-overlay"></div>
-  <div class="success-container">
-    <div class="success-check"></div>
+  <div class="container">
+    <div class="burst-container">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <!-- Star element acting as the logo -->
+      <div class="star"></div>
+    </div>
     <h1>Payment Successful!</h1>
-    <p>Your transaction has been completed successfully.</p>
-    <button class="home-btn" onclick="window.location.href='http://localhost:4000/'">Return Home</button>
-
+    <p>Your payment has been processed successfully.</p>
+    <button class="btn" onclick="window.location.href='http://localhost:4000/'">Return Home</button>
   </div>
 </body>
 </html>

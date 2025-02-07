@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
  
 //for production (https://epay.esewa.com.np/api/epay/transaction/status)
-const STATUS_CHECK = 'https://rc.esewa.com.np/api/epay/transaction/status/';
+const STATUS_CHECK = 'httwps://rc.esewa.com.np/api/epay/transaction/status/';
 const SECRET_KEY = '8gBm/:&EnhH.1/q';
 const PRODUCT_CODE = 'EPAYTEST';
 const SUCCESS_URL = 'http://localhost:4000/success';
@@ -32,59 +32,6 @@ function errorMessage(res, message, error = null) {
 }
 
 
-// // Generate Payment Form
-// app.get('/pay-with-esewa', (req, res) => {
-//     try {
-//         const amount = 500;
-//         const tax_amount = 10;
-//         const total_amount = amount + tax_amount;
-//         const service_charge = 0;
-//         const delivery_charge = 0;
-//         const transaction_uuid = Date.now();
-//         // Message to sign
-//         const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${PRODUCT_CODE}`;
-
-
-//         // Generate HMAC SHA-256 signature
-//         const signature = crypto.createHmac('sha256', SECRET_KEY).update(message).digest('base64');
-//         // const signature = cryptoJS.HmacSHA256(message, SECRET_KEY);
-//         // const signatureInBase64 = cryptoJS.enc.Base64.stringify(signature);
-
-//         // Send the payment form as a response
-//         res.send(`
-//             <body>
-//                 <form action="${BASE_URL}" method="POST">
-//                     <label>Amount:</label>
-//                     <input type="text" id="amount" name="amount" value="${amount}" required>
-//                     <br><label>Tax Amount:</label>
-//                     <input type="text" id="tax_amount" name="tax_amount" value="${tax_amount}" required>
-//                     <br><label>Total Amount:</label>
-//                     <input type="text" id="total_amount" name="total_amount" value="${total_amount}" required>
-//                     <br><label>Transaction UUID:</label>
-//                     <input type="text" id="transaction_uuid" name="transaction_uuid" value="${transaction_uuid}" required>
-//                     <br><label>Product Code:</label>
-//                     <input type="text" id="product_code" name="product_code" value="${PRODUCT_CODE}" required>
-//                     <br><label>Service Charge:</label>
-//                     <input type="text" id="product_service_charge" name="product_service_charge" value="${service_charge}" required>
-//                     <br><label>Delivery Charge:</label>
-//                     <input type="text" id="product_delivery_charge" name="product_delivery_charge" value="${delivery_charge}" required>
-//                     <br><label>Success URL:</label>
-//                     <input type="text" id="success_url" name="success_url" value="${SUCCESS_URL}" required>
-//                     <br><label>Failure URL:</label>
-//                     <input type="text" id="failure_url" name="failure_url" value="${FAILURE_URL}" required>
-//                     <br><label>Signed Field Names:</label>
-//                     <input type="text" id="signed_field_names" name="signed_field_names" value="total_amount,transaction_uuid,product_code" required>
-//                     <br><label>Signature:</label>
-//                     <input type="text" id="signature" name="signature" value="${signature}" required>
-//                     <br><input value="Submit" type="submit">
-//                 </form>
-//             </body>
-//         `);
-//     } catch (error) {
-//         res.status(500).json({ status: false, message: error.message });
-//     }
-// });
-
 app.get("/payment", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
@@ -93,6 +40,7 @@ app.get("/payment", (req, res) => {
 app.post('/pay-with-esewa', async (req, res) => {
     if (!req.body) return errorMessage(res, "All data field is required")
     try {
+        
         const { amount, tax_amount = 0, product_service_charge = 0, product_delivery_charge = 0 } = req.body;
         if (!amount) return errorMessage(res, "No amount is given.Please enter a amount")
         if(amount<=0)return errorMessage(res, "Amount must be above 0.")
@@ -137,14 +85,14 @@ app.post('/pay-with-esewa', async (req, res) => {
 });
 
 
-
 app.get("/success", async (req, res) => {
     try {
         if (!req.query.data) return errorMessage(res, "Server error")
         const encodedData = req.query.data;
         const decodedData = JSON.parse(Buffer.from(encodedData, "base64").toString("utf-8"));
         const TotalAmt = decodedData.total_amount.replace(/,/g, '')
-        const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${TotalAmt},transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
+        const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${TotalAmt},
+        transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
 
         const hash = crypto.createHmac("sha256", SECRET_KEY).update(message).digest("base64");
 
@@ -163,10 +111,11 @@ app.get("/success", async (req, res) => {
                 transaction_uuid: decodedData.transaction_uuid
             }
         });
-
+        
         const { status, transaction_uuid, total_amount } = response.data;
         if (status !== "COMPLETE" || transaction_uuid !== decodedData.transaction_uuid || Number(total_amount) !== Number(TotalAmt)) {
             return errorMessage(res, "Invalid transaction details")
+
         }
         return res.sendFile(path.join(__dirname, 'public', 'sucess.html'));
 
@@ -197,6 +146,11 @@ app.get('/failure', (req, res) => {
     //     message: 'Transaction failed.Please try again later.',
     // });
 });
+app.get("/test",(req,res)=>{
+    
+    return res.sendFile(path.join(__dirname, 'public', 'sucess.html'));
+
+})
 
 app.listen(4000, () => {
     console.log('App is running on port 4000');
