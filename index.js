@@ -15,6 +15,7 @@ const BASE_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
  
 //for production (https://epay.esewa.com.np/api/epay/transaction/status)
 const STATUS_CHECK = 'httwps://rc.esewa.com.np/api/epay/transaction/status/';
+// SECRET_KEY and PRODUCT_CODE is provided by esewa for testing
 const SECRET_KEY = '8gBm/:&EnhH.1/q';
 const PRODUCT_CODE = 'EPAYTEST';
 const SUCCESS_URL = 'http://localhost:4000/success';
