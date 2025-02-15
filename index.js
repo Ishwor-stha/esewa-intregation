@@ -117,6 +117,7 @@ app.get("/success", async (req, res) => {
             return errorMessage(res, "Invalid transaction details")
 
         }
+        //after verification store something to the database ie(payemnt details etc) in my example i wil simply send success html file 
         return res.sendFile(path.join(__dirname, 'public', 'sucess.html'));
 
         // console.log(response.data)
