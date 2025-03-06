@@ -50,7 +50,10 @@ The code provided integrates the eSewa API with the backend to securely send pay
 
 ## Routes:
 1. **GET `/payment`**: Displays the payment form (`public/index.html`).
-   
+   e, all the logic is contained within a single file (app.js) for simplicity. However, for a more scalable application, it is highly recommended to break the logic into multiple files such as:
+
+    controllers/paymentController.js: Handles payment logic.
+    routes/paymentRout
 2. **POST `/pay-with-esewa`**: Handles the payment request by sending the payment details to the eSewa API and redirects to eSewa's payment gateway.
 
 3. **GET `/success`**: Handles the response from eSewa after the payment is completed. It verifies the transaction's validity and displays a success page or an error message.
@@ -91,15 +94,3 @@ PRODUCT_CODE=EPAYTEST
 ## Security Notes:
 - **Signature Validation**: Always validate the signature sent by eSewa to ensure the integrity and authenticity of the transaction.
 - **Data Privacy**: Do not store sensitive data such as the `SECRET_KEY` or user payment information directly in your code. Use environment variables to store sensitive credentials.
-
-## Conclusion:
-In this code, all the logic is contained within a single file (`app.js`) for simplicity. However, for a more scalable application, it is highly recommended to break the logic into multiple files such as:
-
-- **controllers/paymentController.js**: Handles payment logic.
-- **routes/paymentRoutes.js**: Defines all payment-related routes.
-- **utils/cryptoUtils.js**: Utility functions for generating and verifying signatures.
-
-This will make the codebase more maintainable and easier to understand.
-
----
-
