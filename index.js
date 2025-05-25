@@ -97,33 +97,18 @@ app.get("/:transactionId/success", async (req, res) => {
         if (!req.query.data) return errorMessage(res, "Server error")
         let transactionId = req.params.transactionId
          transactionId=Number(transactionId)
-
-
-
-
-
         const encodedData = req.query.data;
         const decodedData = JSON.parse(Buffer.from(encodedData, "base64").toString("utf-8"));
-
 
         let TotalAmt = decodedData.total_amount.replace(/,/g, '')//removing the comma from the amount for hashing the message ie (5,000)=>(5000)
         TotalAmt = Number(TotalAmt); // Convert to a number
 
         TotalAmt = Number.isInteger(TotalAmt) ? TotalAmt.toFixed(0) : TotalAmt;
-
         const userSignature = `total_amount=${TotalAmt},transaction_uuid=${transactionId},product_code=${PRODUCT_CODE}`;
         const esewaSignature = `total_amount=${TotalAmt},transaction_uuid=${decodedData.transaction_uuid},product_code=${PRODUCT_CODE}`;
 
-        console.log(userSignature)
-        console.log(esewaSignature)
-
         const userHash = crypto.createHmac("sha256", SECRET_KEY).update(userSignature).digest("base64");
         const esewaHash = crypto.createHmac("sha256", SECRET_KEY).update(esewaSignature).digest("base64");
-
-        console.log(userHash);
-        console.log(esewaHash);
-
-
 
         if (userHash !== esewaHash) {
             return errorMessage(res, "Invalid signature")
