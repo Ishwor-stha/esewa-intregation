@@ -5,9 +5,13 @@ const path = require('path');
 // const cryptoJS = require("crypto-js");
 
 const app = express();
+const dotenv=require("dotenv")
+
+dotenv.config()
 app.use(express.json({ limit: '15kb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 // PUT ALL THE BELOW CREDENTIALS ON .ENV FILE
 //for production (https://epay.esewa.com.np/api/epay/main/v2/form )
@@ -33,12 +37,8 @@ function errorMessage(res, message, error = null) {
 }
 
 
-app.get("/payment", (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-})
-
 // Payment Form Route
-app.post('/pay-with-esewa', async (req, res) => {
+app.post('/pay-with-esewa',async (req, res) => {
     if (!req.body) return errorMessage(res, "All data field is required")
     try {
 

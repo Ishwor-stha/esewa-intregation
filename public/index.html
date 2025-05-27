@@ -2,312 +2,123 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Esewa payment</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eSewa Payment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Load Google reCAPTCHA API -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
-        :root {
-            --primary: #ff6b6b;
-            --secondary: #ff8e8e;
-            --accent: #4ecdc4;
-            --dark: #2d3436;
-        }
-
-        /* Base setup */
         body {
-
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #ece9e6, #ffffff);
             display: flex;
-            justify-content: center;
             align-items: center;
-
+            justify-content: center;
+            height: 100vh;
             margin: 0;
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-            overflow: hidden;
-            /* Fallback background */
-            background: linear-gradient(135deg, #0a0a0a, #222);
         }
 
-        /* Creative animated background container */
-        .background-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        /* Generic shape styling */
-        .shape {
-            position: absolute;
-            opacity: 0.2;
-            animation: float 20s infinite ease-in-out;
-        }
-
-        /* Circle shape */
-        .circle {
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(78, 205, 196, 0.8), transparent 70%);
-            border-radius: 50%;
-        }
-
-        /* Triangle shape using borders */
-        .triangle {
-            width: 0;
-            height: 0;
-            border-left: 80px solid transparent;
-            border-right: 80px solid transparent;
-            border-bottom: 140px solid rgba(255, 107, 107, 0.8);
-        }
-
-        /* Hexagon shape with clip-path */
-        .hexagon {
-            width: 100px;
-            height: 55px;
-            background: rgba(255, 142, 142, 0.8);
-            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-        }
-
-        /* Floating animation effect */
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg) scale(1);
-            }
-
-            50% {
-                transform: translateY(-50px) rotate(180deg) scale(1.2);
-            }
-
-            100% {
-                transform: translateY(0) rotate(360deg) scale(1);
-            }
-        }
-
-        /* Positioning various shapes with different timing */
-        .shape:nth-child(1) {
-            top: 10%;
-            left: 5%;
-            animation-duration: 25s;
-        }
-
-        .shape:nth-child(2) {
-            top: 30%;
-            left: 80%;
-            animation-duration: 30s;
-            animation-delay: 3s;
-        }
-
-        .shape:nth-child(3) {
-            top: 70%;
-            left: 20%;
-            animation-duration: 28s;
-            animation-delay: 2s;
-        }
-
-        .shape:nth-child(4) {
-            top: 50%;
-            left: 50%;
-            animation-duration: 35s;
-            animation-delay: 4s;
-        }
-
-        .shape:nth-child(5) {
-            top: 15%;
-            left: 60%;
-            animation-duration: 22s;
-            animation-delay: 1s;
-        }
-
-        .shape:nth-child(6) {
-            top: 80%;
-            left: 10%;
-            animation-duration: 26s;
-            animation-delay: 5s;
-        }
-
-        .shape:nth-child(7) {
-            top: 40%;
-            left: 30%;
-            animation-duration: 32s;
-            animation-delay: 2.5s;
-        }
-
-        .shape:nth-child(8) {
-            top: 65%;
-            left: 75%;
-            animation-duration: 30s;
-            animation-delay: 3.5s;
-        }
-
-        /* Form container styling remains similar */
         .form-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background-color: #fff;
             padding: 2.5rem;
-            width: 450px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 90%;
             position: relative;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            transform: scale(0.98);
-            transition: transform 0.3s ease;
-            z-index: 1;
+            transition: opacity 0.3s ease-in-out;
         }
 
-        .form-container:hover {
-            transform: scale(1);
-        }
-
-        h1 {
-            color: var(--dark);
-            font-weight: 600;
+        .form-container h2 {
             text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: var(--accent);
-            border-radius: 2px;
+            margin-bottom: 1.5rem;
+            color: #2d3436;
         }
 
         .input-group {
             position: relative;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         .input-group i {
             position: absolute;
-            left: 15px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--dark);
-            opacity: 0.6;
+            color: #636e72;
         }
 
-        input {
+        .input-group input {
             width: 100%;
-            padding: 1rem 1rem 1rem 40px;
-            border: 2px solid rgba(45, 52, 54, 0.1);
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s ease-in-out;
         }
 
-        input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(78, 205, 196, 0.2);
-            outline: none;
-            background: white;
+        .input-group input:focus {
+            border-color: #0984e3;
         }
 
         input[type="submit"] {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1rem;
-            font-weight: 600;
+            width: 100%;
+            padding: 12px;
             border: none;
-            border-radius: 10px;
+            background-color: #00b894;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            margin-top: 1rem;
-            position: relative;
-            overflow: hidden;
+            transition: background-color 0.3s ease;
         }
 
         input[type="submit"]:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
-        }
-
-        input[type="submit"]::after {
-            content: '→';
-            position: absolute;
-            right: -20px;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: right 0.3s ease;
-        }
-
-        input[type="submit"]:hover::after {
-            right: 20px;
-        }
-
-        .watermark {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            opacity: 0.1;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark);
+            background-color: #019875;
         }
 
         .success-check {
             display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: checkPop 0.6s ease;
+            text-align: center;
+            font-size: 48px;
+            color: #00b894;
+            animation: fadeIn 1s ease-in-out forwards;
         }
 
-        @keyframes checkPop {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
             }
 
-            80% {
-                transform: translate(-50%, -50%) scale(1.2);
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
+        }
 
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-            }
+        .g-recaptcha {
+            margin: 1rem 0;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-top: 0.5rem;
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <!-- Creative animated background with multiple geometric shapes -->
-    <div class="background-animation">
-        <div class="shape circle"></div>
-        <div class="shape triangle"></div>
-        <div class="shape hexagon"></div>
-        <div class="shape circle"></div>
-        <div class="shape triangle"></div>
-        <div class="shape hexagon"></div>
-        <div class="shape circle"></div>
-        <div class="shape triangle"></div>
-    </div>
-
     <div class="form-container">
-        <h1>Payment Gateway</h1>
-        <div class="watermark">ESEWA</div>
-        <form action="http://localhost:4000/pay-with-esewa" method="POST">
+        <h2>eSewa Payment Form</h2>
+        <form action="http://localhost:4000/pay-with-esewa" method="POST" id="paymentForm">
             <div class="input-group">
                 <i class="fas fa-coins"></i>
                 <input type="number" id="amount" name="amount" placeholder="Amount" step="any" required>
-
             </div>
             <div class="input-group">
                 <i class="fas fa-percentage"></i>
@@ -315,31 +126,54 @@
             </div>
             <div class="input-group">
                 <i class="fas fa-concierge-bell"></i>
-                <input type="text" id="product_service_charge" name="product_service_charge"
-                    placeholder="Service Charge" required>
+                <input type="text" id="product_service_charge" name="product_service_charge" placeholder="Service Charge" required>
             </div>
             <div class="input-group">
                 <i class="fas fa-truck-moving"></i>
-                <input type="text" id="delivery_charge" name="product_delivery_charge" placeholder="Delivery Charge"
-                    required>
+                <input type="text" id="product_delivery_charge" name="product_delivery_charge" placeholder="Delivery Charge" required>
             </div>
+
+            <!-- Google reCAPTCHA v3 (invisible, triggers on form submission) -->
+            <div class="g-recaptcha" data-sitekey="siteKey provided by google"></div>
+            <div class="error-message" id="captchaError">Please complete the CAPTCHA.</div>
+
             <input type="submit" value="Proceed to Pay">
         </form>
-        <div class="success-check"></div>
+        <div class="success-check">✔</div>
     </div>
 
-    <script>
-        document.querySelector('form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const form = this;
-            const check = document.querySelector('.success-check');
-            form.style.opacity = '0';
-            check.style.display = 'block';
-            setTimeout(() => {
-                form.submit();
-            }, 2000);
-        });
-    </script>
+ <script>
+    document.getElementById('paymentForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const form = this;
+        const check = document.querySelector('.success-check');
+        const errorMessage = document.getElementById('captchaError');
+
+        // Get reCAPTCHA response
+        const recaptchaResponse = grecaptcha.getResponse();
+        if (!recaptchaResponse) {
+            errorMessage.style.display = 'block'; // Show error if CAPTCHA not completed
+            return;
+        }
+
+        // Add reCAPTCHA token to form as hidden input
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'g-recaptcha-response';
+        tokenInput.value = recaptchaResponse;
+        form.appendChild(tokenInput);
+
+        // Hide error, show success animation, and submit form
+        errorMessage.style.display = 'none';
+        form.style.opacity = '0';
+        check.style.display = 'block';
+
+        setTimeout(() => {
+            form.submit(); // Submit the form with the token
+        }, 2000);
+    });
+</script>
 </body>
 
 </html>
